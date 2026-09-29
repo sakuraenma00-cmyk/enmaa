@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f3f4f1">
+  <meta name="theme-color" content="#08090b">
   <meta name="description" content="A focused workspace for keeping assignments, courses, and deadlines in view.">
   <title>RED//CORE — Academic Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,17 +11,17 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --paper: #f3f4f1;
-      --surface: #fff;
-      --ink: #222925;
-      --muted: #68716c;
-      --line: #e1e5e0;
-      --red: #b32135;
-      --red-wash: #faedef;
-      --green: #286b53;
-      --amber: #946122;
-      --blue: #356a93;
+      color-scheme: dark;
+      --paper: #08090b;
+      --surface: #111216;
+      --ink: #f4f4f6;
+      --muted: #a0a1aa;
+      --line: #292a30;
+      --red: #ff294d;
+      --red-wash: rgba(255, 41, 77, .12);
+      --green: #72e0aa;
+      --amber: #ffd36a;
+      --blue: #83bcff;
       --mono: "Space Mono", monospace;
       --sans: "DM Sans", sans-serif;
     }
@@ -169,6 +169,81 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
+
+    body {
+      background-color: var(--paper);
+      background-image: linear-gradient(rgba(255, 41, 77, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 41, 77, .035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      background-attachment: fixed;
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: rgba(255, 41, 77, .72); }
+    .topbar { position: sticky; top: 0; z-index: 2; border-color: var(--line); background: rgba(8, 9, 11, .92); backdrop-filter: blur(16px); }
+    .brand-mark { box-shadow: 0 0 22px rgba(255, 41, 77, .24); }
+    .icon-button, .profile-button { border-color: var(--line); background: #111216; color: var(--ink); }
+    .icon-button:hover, .profile-button:hover { border-color: rgba(255, 41, 77, .6); background: var(--red-wash); }
+    .avatar { background: #251116; color: var(--red); }
+    .sidebar { border-color: var(--line); background: #0c0d10; }
+    .nav-heading { color: #777983; }
+    .nav-button { color: #b8b9c0; }
+    .nav-button:hover { background: #17181d; color: white; }
+    .nav-button.active { border-color: rgba(255, 41, 77, .26); background: linear-gradient(90deg, rgba(255, 41, 77, .15), rgba(255, 41, 77, .035)); color: #fff; }
+    .nav-symbol { font-family: var(--sans); font-size: 15px; }
+    .nav-count { color: #858690; }
+    .welcome { border-color: #303137; background-color: #101114; background-image: linear-gradient(rgba(255, 41, 77, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 41, 77, .055) 1px, transparent 1px), linear-gradient(115deg, #151619 0%, #0e0f12 72%, #210b11 100%); background-size: 32px 32px, 32px 32px, auto; }
+    .welcome-copy { background: linear-gradient(90deg, #151619 82%, transparent); }
+    .eyebrow { color: #ff536e; }
+    .welcome p, .section-head p { color: #a1a2aa; }
+    .date-block { border-color: #3a252a; }
+    .date-label, .stat-label { color: #a1a2aa; }
+    .date-value { color: #fff; }
+    .stat { border-color: var(--line); border-top-color: rgba(255, 41, 77, .5); background: #111216; }
+    .stat:nth-child(2) { border-top-color: rgba(114, 224, 170, .55); }
+    .stat:nth-child(3) { border-top-color: rgba(255, 211, 106, .55); }
+    .stat:nth-child(4) { border-top-color: rgba(255, 41, 77, .8); }
+    .stat-hint { color: #81828b; }
+    .toolbar { border-color: var(--line); }
+    .search input, .sort-select, .field input, .field select, .field textarea { border-color: #34353c; background: #0c0d10; color: #f4f4f6; }
+    .search input::placeholder, .field input::placeholder, .field textarea::placeholder { color: #777983; }
+    .search-symbol { color: #aaaab2; }
+    .primary-button { box-shadow: 0 5px 20px rgba(255, 41, 77, .16); }
+    .primary-button:hover { background: #e91d40; }
+    .task { border-color: #292a30; background: linear-gradient(145deg, #141519, #101114); }
+    .task:hover { border-color: rgba(255, 41, 77, .46); box-shadow: 0 12px 32px rgba(0, 0, 0, .3), 0 0 20px rgba(255, 41, 77, .06); }
+    .task.overdue { border-left-color: var(--red); }
+    .task.completed { background: #101512; }
+    .course-label { color: #ff7185; }
+    .priority { background: #24252b; color: #c0c1c8; }
+    .priority.high { background: rgba(255, 41, 77, .13); color: #ff617b; }
+    .priority.medium { background: rgba(255, 211, 106, .1); color: var(--amber); }
+    .priority.low { background: rgba(131, 188, 255, .1); color: var(--blue); }
+    .completed .task-title { color: #858b87; }
+    .task-notes { color: #a1a2aa; }
+    .meta { border-color: #2d2e34; background: #0d0e11; color: #c0c1c8; }
+    .meta:nth-child(1)::before { content: "📅 "; }
+    .meta:nth-child(2)::before { content: "🕒 "; }
+    .meta:nth-child(3)::before { content: "✨ "; }
+    .meta.overdue-text::before { content: "🔥 "; }
+    .meta.completed-text::before { content: "✅ "; }
+    .task-action { border-color: #303137; background: #15161a; color: #c3c4ca; }
+    .task-action:hover { border-color: rgba(255, 41, 77, .5); background: var(--red-wash); color: white; }
+    .task-action.done-action { color: var(--green); }
+    .empty { border-color: #383940; background: rgba(17, 18, 22, .8); }
+    .empty p { color: var(--muted); }
+    dialog { border-color: #3a252a; background: #111216; color: var(--ink); box-shadow: 0 24px 90px #000b, 0 0 40px rgba(255, 41, 77, .08); }
+    dialog::backdrop { background: rgba(0, 0, 0, .78); backdrop-filter: blur(8px); }
+    .close-button, .secondary-button { border-color: #34353c; background: #15161a; color: #c3c4ca; }
+    .close-button:hover, .secondary-button:hover { border-color: rgba(255, 41, 77, .5); color: white; }
+    .field label { color: #b4b5bc; }
+    .danger-button { border-color: rgba(255, 41, 77, .3); background: var(--red-wash); color: #ff7185; }
+    .toast { border: 1px solid #3a252a; background: #17181c; color: white; }
+    .privacy-note { color: #858690; }
+    .privacy-note strong { color: #d4d4d9; }
+    @media (max-width: 700px) {
+      .sidebar { border-bottom-color: var(--line); }
+    }
+    @media (max-width: 430px) {
+      .welcome-copy { background: #151619; }
+    }
   </style>
 </head>
 <body>
@@ -190,11 +265,11 @@
         <p class="nav-heading">Workspace</p>
         <button class="nav-button active" type="button" data-course="all"><span class="nav-symbol">ALL</span><span class="nav-name">All assignments</span><span class="nav-count" id="count-all">0</span></button>
         <p class="nav-heading courses-heading">Courses</p>
-        <button class="nav-button" type="button" data-course="technical"><span class="nav-symbol">01</span><span class="nav-name">Technical Drawing</span><span class="nav-count" id="count-technical">0</span></button>
-        <button class="nav-button" type="button" data-course="ia"><span class="nav-symbol">02</span><span class="nav-name">Information Architecture</span><span class="nav-count" id="count-ia">0</span></button>
-        <button class="nav-button" type="button" data-course="interactive"><span class="nav-symbol">03</span><span class="nav-name">Interactive Systems</span><span class="nav-count" id="count-interactive">0</span></button>
-        <button class="nav-button" type="button" data-course="visual2d"><span class="nav-symbol">04</span><span class="nav-name">2D Visualization</span><span class="nav-count" id="count-visual2d">0</span></button>
-        <button class="nav-button" type="button" data-course="visual"><span class="nav-symbol">05</span><span class="nav-name">Visual Design</span><span class="nav-count" id="count-visual">0</span></button>
+        <button class="nav-button" type="button" data-course="technical"><span class="nav-symbol">📐</span><span class="nav-name">Technical Drawing</span><span class="nav-count" id="count-technical">0</span></button>
+        <button class="nav-button" type="button" data-course="ia"><span class="nav-symbol">🧭</span><span class="nav-name">Information Architecture</span><span class="nav-count" id="count-ia">0</span></button>
+        <button class="nav-button" type="button" data-course="interactive"><span class="nav-symbol">⚡</span><span class="nav-name">Interactive Systems</span><span class="nav-count" id="count-interactive">0</span></button>
+        <button class="nav-button" type="button" data-course="visual2d"><span class="nav-symbol">🧊</span><span class="nav-name">2D Visualization</span><span class="nav-count" id="count-visual2d">0</span></button>
+        <button class="nav-button" type="button" data-course="visual"><span class="nav-symbol">🎨</span><span class="nav-name">Visual Design</span><span class="nav-count" id="count-visual">0</span></button>
       </aside>
 
       <main>
@@ -263,11 +338,11 @@
 
     const STORAGE_KEY = "redcore_academic_v3";
     const COURSES = {
-      technical: { name: "Technical Drawing", mark: "01" },
-      ia: { name: "Information Architecture", mark: "02" },
-      interactive: { name: "Interactive Systems", mark: "03" },
-      visual2d: { name: "2D Visualization", mark: "04" },
-      visual: { name: "Visual Design", mark: "05" }
+      technical: { name: "Technical Drawing", icon: "📐" },
+      ia: { name: "Information Architecture", icon: "🧭" },
+      interactive: { name: "Interactive Systems", icon: "⚡" },
+      visual2d: { name: "2D Visualization", icon: "🧊" },
+      visual: { name: "Visual Design", icon: "🎨" }
     };
     const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
     let state = loadData();
@@ -396,7 +471,8 @@
       const status = getStatus(task);
       const article = makeElement("article", `task${task.completed ? " completed" : ""}${status === "overdue" ? " overdue" : ""}`);
       const top = makeElement("div", "task-top");
-      top.append(makeElement("span", "course-label", COURSES[task.course]?.name || "Course"));
+      const course = COURSES[task.course] || { name: "Course", icon: "📚" };
+      top.append(makeElement("span", "course-label", `${course.icon} ${course.name}`));
       top.append(makeElement("span", `priority ${task.priority}`, task.priority));
       article.append(top, makeElement("h3", "task-title", task.title));
       if (task.notes) article.append(makeElement("p", "task-notes", task.notes));
