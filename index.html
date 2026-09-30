@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#08090b">
   <meta name="description" content="A focused workspace for keeping assignments, courses, and deadlines in view.">
   <title>RED//CORE — Academic Command Center</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -126,9 +127,61 @@
     .privacy-note { margin-top: 24px; color: #78817b; font-size: 10px; line-height: 1.5; }
     .privacy-note strong { color: #53615a; }
 
+    .game-panel { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr); gap: 12px; margin-top: 16px; }
+    .game-card, .achievement-card { min-width: 0; padding: 18px; border: 1px solid var(--line); background: linear-gradient(145deg, #151619, #101114); }
+    .game-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .game-label { color: #ff7185; font: 700 9px var(--mono); text-transform: uppercase; }
+    .level-badge { padding: 5px 8px; border: 1px solid rgba(255, 41, 77, .3); color: #ff7185; font: 700 9px var(--mono); }
+    .game-name { margin-top: 8px; font-size: 20px; font-weight: 700; }
+    .xp-copy { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; color: var(--muted); font: 10px var(--mono); }
+    .xp-track { height: 6px; margin-top: 7px; background: #27282e; }
+    .xp-fill { width: 0; height: 100%; background: var(--red); box-shadow: 0 0 12px rgba(255, 41, 77, .6); transition: width .3s; }
+    .game-numbers { display: flex; gap: 22px; margin-top: 14px; color: var(--muted); font-size: 10px; }
+    .game-numbers strong { display: block; margin-bottom: 3px; color: white; font: 700 17px var(--mono); }
+    .achievement-list { display: grid; gap: 8px; margin-top: 10px; }
+    .achievement { display: flex; align-items: center; gap: 9px; color: #777983; font-size: 10px; }
+    .achievement.unlocked { color: #e8e8eb; }
+    .achievement-mark { color: #54555d; font: 13px var(--mono); }
+    .achievement.unlocked .achievement-mark { color: var(--green); }
+    .archive-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 30px 0 12px; }
+    .archive-head h2 { margin: 0; font-size: 18px; }
+    .archive-head p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .gallery-card { min-width: 0; border: 1px solid var(--line); background: #111216; }
+    .gallery-image { display: block; width: 100%; height: 190px; object-fit: cover; background: #0c0d10; }
+    .gallery-body { padding: 12px; }
+    .gallery-title { overflow-wrap: anywhere; font-size: 12px; font-weight: 700; }
+    .gallery-meta { margin-top: 6px; color: var(--muted); font-size: 10px; }
+    .network-note { color: #ffbdc6; }
+    .field input[type="file"] { height: auto; }
+    .jump-nav { margin-bottom: 18px; }
+    .sync-banner { display: flex; align-items: center; gap: 10px; margin-top: 13px; padding: 11px 13px; border: 1px solid rgba(255, 211, 106, .25); background: rgba(255, 211, 106, .055); color: #d5c89f; font-size: 11px; line-height: 1.5; }
+    .sync-banner.connected { border-color: rgba(114, 224, 170, .24); background: rgba(114, 224, 170, .055); color: #b4e6ca; }
+    .sync-light { flex: 0 0 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px currentColor; }
+    .sync-banner.connected .sync-light { background: var(--green); }
+    .sync-message { flex: 1; }
+    .sync-message strong { color: white; }
+    .sync-connect { min-height: 30px; padding: 0 9px; border: 1px solid rgba(255, 211, 106, .38); background: transparent; color: white; cursor: pointer; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .sync-connect:hover { border-color: var(--red); background: var(--red-wash); }
+    .sync-connect[hidden] { display: none; }
+    .sync-banner button:disabled { opacity: .5; cursor: not-allowed; }
+    @keyframes system-entry { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+    .welcome { animation: system-entry .45s both; }
+    .stat { animation: system-entry .45s both; }
+    .stat:nth-child(2) { animation-delay: .04s; }
+    .stat:nth-child(3) { animation-delay: .08s; }
+    .stat:nth-child(4) { animation-delay: .12s; }
+    .game-card, .achievement-card { box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 15px 40px rgba(0, 0, 0, .18); }
+    .task { transition: transform .18s, border-color .18s, box-shadow .18s; animation: system-entry .35s both; }
+    .task:hover { transform: translateY(-3px); border-color: rgba(255, 41, 77, .55); box-shadow: 0 14px 34px rgba(0, 0, 0, .3), 0 0 22px rgba(255, 41, 77, .07); }
+    .primary-button { background-image: linear-gradient(110deg, #ff294d, #d91e40); }
+    .primary-button:hover { background-image: linear-gradient(110deg, #f24b66, #bd1835); }
+    @media (prefers-reduced-motion: reduce) { .welcome, .stat, .task { animation: none; } .task:hover { transform: none; } }
+
     @media (max-width: 980px) {
       .layout { grid-template-columns: 190px minmax(0, 1fr); }
       .task-list { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .topbar { padding: 0 20px; }
       main { padding: 25px 22px 45px; }
     }
@@ -150,6 +203,8 @@
       .search { flex-basis: 100%; max-width: none; }
       .sort-select { flex: 1; min-width: 0; }
       .toolbar .primary-button { flex: 1; }
+      .game-panel { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
     }
     @media (max-width: 430px) {
       .topbar { height: 58px; padding: 0 12px; }
@@ -251,6 +306,7 @@
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">R//</span><span class="brand-name">RED<span>//</span>CORE</span></div>
       <div class="top-actions">
+        <button class="icon-button" id="settingsButton" type="button" title="Network settings" aria-label="Network settings">&#9881;</button>
         <button class="icon-button" id="exportButton" type="button" title="Export backup" aria-label="Export backup">&#8593;</button>
         <button class="icon-button" id="importButton" type="button" title="Import backup" aria-label="Import backup">&#8595;</button>
         <input id="importFile" type="file" accept="application/json,.json" hidden>
@@ -263,7 +319,11 @@
     <div class="layout">
       <aside class="sidebar" aria-label="Course filters">
         <p class="nav-heading">Workspace</p>
-        <button class="nav-button active" type="button" data-course="all"><span class="nav-symbol">ALL</span><span class="nav-name">All assignments</span><span class="nav-count" id="count-all">0</span></button>
+        <button class="nav-button active" type="button" data-jump="dashboard"><span class="nav-symbol">◉</span><span class="nav-name">Mission board</span></button>
+        <button class="nav-button" type="button" data-jump="gamePanel"><span class="nav-symbol">✦</span><span class="nav-name">Player status</span></button>
+        <button class="nav-button" type="button" data-jump="archive"><span class="nav-symbol">▧</span><span class="nav-name">Finished work</span></button>
+        <p class="nav-heading courses-heading">Filter by course</p>
+        <button class="nav-button" type="button" data-course="all"><span class="nav-symbol">ALL</span><span class="nav-name">All assignments</span><span class="nav-count" id="count-all">0</span></button>
         <p class="nav-heading courses-heading">Courses</p>
         <button class="nav-button" type="button" data-course="technical"><span class="nav-symbol">📐</span><span class="nav-name">Technical Drawing</span><span class="nav-count" id="count-technical">0</span></button>
         <button class="nav-button" type="button" data-course="ia"><span class="nav-symbol">🧭</span><span class="nav-name">Information Architecture</span><span class="nav-count" id="count-ia">0</span></button>
@@ -272,7 +332,7 @@
         <button class="nav-button" type="button" data-course="visual"><span class="nav-symbol">🎨</span><span class="nav-name">Visual Design</span><span class="nav-count" id="count-visual">0</span></button>
       </aside>
 
-      <main>
+      <main id="dashboard">
         <section class="welcome" aria-labelledby="welcomeTitle">
           <div class="welcome-copy">
             <div class="eyebrow">Academic workspace / 01</div>
@@ -282,11 +342,28 @@
           <div class="date-block"><div class="date-label">Today</div><div class="date-value" id="currentDate">—</div></div>
         </section>
 
+        <div class="sync-banner" id="syncStatus" role="status" aria-live="polite">
+          <span class="sync-light" aria-hidden="true"></span>
+          <span class="sync-message" id="syncMessage"><strong>Local mode.</strong> Assignments are saved only in this browser until a shared database is connected.</span>
+          <button class="sync-connect" id="syncConnect" type="button">Connect network</button>
+        </div>
+
         <section class="stats" aria-label="Assignment summary">
           <article class="stat"><div class="stat-label">Total tasks</div><div class="stat-value" id="totalTasks">0</div><div class="stat-hint">Across all courses</div></article>
           <article class="stat"><div class="stat-label">Completed</div><div class="stat-value" id="completedTasks">0</div><div class="stat-hint" id="completionHint">Ready when you are</div></article>
           <article class="stat"><div class="stat-label">Due in 48 hours</div><div class="stat-value" id="dueSoonTasks">0</div><div class="stat-hint">Coming up next</div></article>
           <article class="stat"><div class="stat-label">Overdue</div><div class="stat-value" id="overdueTasks">0</div><div class="stat-hint">Uncompleted deadlines</div></article>
+        </section>
+
+        <section class="game-panel" id="gamePanel" aria-label="Player game status">
+          <article class="game-card">
+            <div class="game-topline"><span class="game-label">Player // Active</span><span class="level-badge">LEVEL <span id="playerLevel">1</span></span></div>
+            <div class="game-name" id="gameName">Student</div>
+            <div class="xp-copy"><span id="xpProgress">0 / 100 XP</span><span id="totalXp">0 XP</span></div>
+            <div class="xp-track" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="xp-fill" id="xpFill"></div></div>
+            <div class="game-numbers"><span><strong id="gameCompleted">0</strong>Missions cleared</span><span><strong id="achievementCount">0</strong>Achievements</span></div>
+          </article>
+          <article class="achievement-card"><div class="game-label">Achievement log</div><div class="achievement-list" id="achievementList"></div></article>
         </section>
 
         <section class="toolbar" aria-label="Assignment tools">
@@ -301,7 +378,10 @@
           <div class="section-head"><div><h2 id="sectionTitle">All assignments</h2><p id="sectionSubtitle">Your complete academic workload</p></div></div>
           <div class="task-list" id="taskList" aria-live="polite"></div>
         </section>
-        <p class="privacy-note"><strong>Your data stays in this browser.</strong> It is not shared or synced with other visitors. Use export/import to move a backup between devices.</p>
+        <section id="archive" aria-labelledby="archiveTitle">
+          <div class="archive-head"><div><h2 id="archiveTitle">Finished work archive</h2><p>Completed work shared by the network</p></div><button class="primary-button" id="uploadButton" type="button">＋ Upload work</button></div>
+          <div class="gallery" id="gallery" aria-live="polite"></div>
+        </section>
       </main>
     </div>
   </div>
@@ -331,12 +411,39 @@
       </form>
     </div>
   </dialog>
+
+  <dialog id="networkDialog" aria-labelledby="networkDialogTitle">
+    <div class="dialog-inner">
+      <div class="dialog-head"><h2 id="networkDialogTitle">Connect the network</h2><button class="close-button" type="button" data-close="networkDialog" aria-label="Close">&times;</button></div>
+      <p class="privacy-note" style="margin:0 0 16px">Use your Supabase project URL and anon/publishable key. All visitors need the same project, with the database setup applied. Connecting replaces this browser's local assignment list with the shared list; export a backup first if needed.</p>
+      <form id="networkForm">
+        <div class="field"><label for="projectUrl">Supabase project URL</label><input id="projectUrl" type="url" required placeholder="https://your-project.supabase.co"></div>
+        <div class="field" style="margin-top:12px"><label for="anonKey">Supabase anon / publishable key</label><input id="anonKey" type="password" required autocomplete="off" placeholder="eyJ... or sb_publishable_..."></div>
+        <div class="dialog-actions"><button class="danger-button" id="disconnectButton" type="button" hidden>Disconnect</button><button class="secondary-button" type="button" data-close="networkDialog">Cancel</button><button class="primary-button" type="submit">Connect</button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="submissionDialog" aria-labelledby="submissionTitle">
+    <div class="dialog-inner">
+      <div class="dialog-head"><h2 id="submissionTitle">Upload finished work</h2><button class="close-button" type="button" data-close="submissionDialog" aria-label="Close">&times;</button></div>
+      <form id="submissionForm">
+        <div class="form-grid">
+          <div class="field full"><label for="submissionAssignment">Completed assignment</label><select id="submissionAssignment" required></select></div>
+          <div class="field full"><label for="submissionImage">Image</label><input id="submissionImage" type="file" accept="image/*" required></div>
+          <div class="field full"><label for="submissionNotes">Notes</label><textarea id="submissionNotes" maxlength="500" placeholder="Optional context about your work"></textarea></div>
+        </div>
+        <div class="dialog-actions"><button class="secondary-button" type="button" data-close="submissionDialog">Cancel</button><button class="primary-button" type="submit">Upload to archive</button></div>
+      </form>
+    </div>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     "use strict";
 
     const STORAGE_KEY = "redcore_academic_v3";
+    const NETWORK_KEY = "redcore_network_v1";
     const COURSES = {
       technical: { name: "Technical Drawing", icon: "📐" },
       ia: { name: "Information Architecture", icon: "🧭" },
@@ -349,6 +456,12 @@
     let activeCourse = "all";
     let editingId = null;
     let toastTimer;
+    let db = null;
+    let realtimeChannel = null;
+    let playerId = null;
+    let cloudMode = false;
+    let completions = new Set();
+    let submissions = [];
 
     const byId = (id) => document.getElementById(id);
     const taskList = byId("taskList");
@@ -383,6 +496,63 @@
         console.warn("Could not save data.", error);
         showToast("Could not save. Check browser storage settings.");
       }
+    }
+
+    function setNetworkStatus(connected) {
+      cloudMode = connected;
+      byId("disconnectButton").hidden = !connected;
+      byId("importButton").disabled = connected;
+      byId("syncConnect").hidden = connected;
+      byId("syncMessage").innerHTML = connected
+        ? "<strong>Global network connected.</strong> Missions and finished work are shared with everyone on this project."
+        : "<strong>Local mode.</strong> Assignments are saved only in this browser until a shared database is connected.";
+      byId("syncStatus").classList.toggle("connected", connected);
+    }
+
+    async function connectNetwork(url, key) {
+      if (!window.supabase?.createClient) throw new Error("The Supabase client could not load. Check your internet connection and reload.");
+      if (realtimeChannel && db) await db.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+      db = window.supabase.createClient(url, key);
+      const { data: sessionData, error: sessionError } = await db.auth.getSession();
+      if (sessionError) throw sessionError;
+      let user = sessionData.session?.user;
+      if (!user) {
+        const { data, error } = await db.auth.signInAnonymously();
+        if (error) throw error;
+        user = data.user;
+      }
+      if (!user) throw new Error("Could not start a player session.");
+      playerId = user.id;
+      setNetworkStatus(true);
+      await loadCloudData();
+      realtimeChannel = db.channel("redcore-network")
+        .on("postgres_changes", { event: "*", schema: "public", table: "assignments" }, () => { void loadCloudData().catch((error) => showToast(error.message)); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "submissions" }, () => { void loadCloudData().catch((error) => showToast(error.message)); })
+        .subscribe();
+    }
+
+    async function loadCloudData() {
+      if (!db || !playerId) return;
+      const [assignmentResult, completionResult, submissionResult, profileResult] = await Promise.all([
+        db.from("assignments").select("*").order("due_date", { ascending: true }),
+        db.from("assignment_completions").select("assignment_id").eq("user_id", playerId),
+        db.from("submissions").select("*, assignments(title, course)").order("created_at", { ascending: false }),
+        db.from("profiles").select("display_name").eq("id", playerId).maybeSingle()
+      ]);
+      const error = assignmentResult.error || completionResult.error || submissionResult.error || profileResult.error;
+      if (error) throw error;
+      completions = new Set((completionResult.data || []).map((row) => String(row.assignment_id)));
+      state.assignments = (assignmentResult.data || []).map((item) => ({
+        id: String(item.id), title: item.title, course: COURSES[item.course] ? item.course : "technical",
+        priority: PRIORITY_WEIGHT[item.priority] ? item.priority : "medium", due: item.due_date || "",
+        notes: item.description || "", completed: completions.has(String(item.id)), createdAt: item.created_at || "",
+        createdBy: item.created_by
+      }));
+      submissions = submissionResult.data || [];
+      if (profileResult.data?.display_name) state.profile.name = profileResult.data.display_name;
+      saveData();
+      renderAll();
     }
 
     function showToast(message) {
@@ -454,6 +624,58 @@
       }
     }
 
+    function updateGame() {
+      const completed = state.assignments.filter((item) => item.completed);
+      const xp = completed.reduce((total, item) => total + (item.priority === "high" ? 500 : item.priority === "medium" ? 250 : 100), 0);
+      const level = Math.floor(xp / 1000) + 1;
+      const progress = xp % 1000;
+      const achievements = [
+        { label: "First mission", unlocked: completed.length >= 1 },
+        { label: "Mission runner · 5 cleared", unlocked: completed.length >= 5 },
+        { label: "Elite student · 10 cleared", unlocked: completed.length >= 10 },
+        { label: "XP hunter · 1,000 XP", unlocked: xp >= 1000 }
+      ];
+      byId("gameName").textContent = state.profile.name || "Student";
+      byId("playerLevel").textContent = level;
+      byId("xpProgress").textContent = `${progress} / 1,000 XP`;
+      byId("totalXp").textContent = `${xp} XP total`;
+      byId("xpFill").style.width = `${progress / 10}%`;
+      byId("xpFill").parentElement.setAttribute("aria-valuenow", String(Math.round(progress / 10)));
+      byId("gameCompleted").textContent = completed.length;
+      byId("achievementCount").textContent = achievements.filter((item) => item.unlocked).length;
+      const list = byId("achievementList");
+      list.replaceChildren(...achievements.map((item) => {
+        const row = makeElement("div", `achievement${item.unlocked ? " unlocked" : ""}`);
+        row.append(makeElement("span", "achievement-mark", item.unlocked ? "◆" : "◇"), makeElement("span", "", item.label));
+        return row;
+      }));
+    }
+
+    function renderGallery() {
+      const gallery = byId("gallery");
+      gallery.replaceChildren();
+      if (!submissions.length) {
+        const empty = makeElement("div", "empty");
+        empty.append(makeElement("div", "empty-mark", "▧"), makeElement("h3", "", "No finished work yet"), makeElement("p", "", "Upload completed assignment images to start the shared archive."));
+        gallery.append(empty);
+        return;
+      }
+      for (const submission of submissions) {
+        const assignment = submission.assignments || {};
+        const card = makeElement("article", "gallery-card");
+        const image = makeElement("img", "gallery-image");
+        image.src = submission.image_url;
+        image.alt = `Finished work: ${assignment.title || "assignment"}`;
+        image.loading = "lazy";
+        const body = makeElement("div", "gallery-body");
+        body.append(makeElement("div", "gallery-title", assignment.title || "Finished work"));
+        body.append(makeElement("div", "gallery-meta", `${submission.student_name || "Student"} · ${COURSES[assignment.course]?.name || "Course"}`));
+        if (submission.notes) body.append(makeElement("div", "gallery-meta", submission.notes));
+        card.append(image, body);
+        gallery.append(card);
+      }
+    }
+
     function updateSectionHeading() {
       const course = COURSES[activeCourse];
       byId("sectionTitle").textContent = course ? course.name : "All assignments";
@@ -495,7 +717,8 @@
       remove.type = "button";
       remove.dataset.action = "delete";
       remove.dataset.id = task.id;
-      actions.append(complete, edit, remove);
+      actions.append(complete);
+      if (!cloudMode || task.createdBy === playerId) actions.append(edit, remove);
       article.append(actions);
       return article;
     }
@@ -526,9 +749,11 @@
     function renderAll() {
       updateProfile();
       updateStats();
+      updateGame();
       updateSectionHeading();
       byId("currentDate").textContent = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date());
       renderAssignments();
+      renderGallery();
     }
 
     function openAssignment(id = null) {
@@ -562,19 +787,35 @@
     byId("addButton").addEventListener("click", () => openAssignment());
     byId("searchInput").addEventListener("input", renderAssignments);
     byId("sortSelect").addEventListener("change", renderAssignments);
-    taskList.addEventListener("click", (event) => {
+    taskList.addEventListener("click", async (event) => {
       const button = event.target.closest("[data-action]");
       if (!button) return;
       const task = state.assignments.find((item) => item.id === button.dataset.id);
       if (!task) return;
       if (button.dataset.action === "complete") {
+        if (cloudMode) {
+          const result = task.completed
+            ? await db.from("assignment_completions").delete().eq("assignment_id", task.id).eq("user_id", playerId)
+            : await db.from("assignment_completions").insert({ assignment_id: task.id, user_id: playerId });
+          if (result.error) { showToast(result.error.message); return; }
+          showToast(task.completed ? "Mission reopened." : "Mission cleared. XP earned.");
+          try { await loadCloudData(); } catch (error) { showToast(error.message); }
+          return;
+        }
         task.completed = !task.completed;
-        showToast(task.completed ? "Assignment completed." : "Assignment reopened.");
+        showToast(task.completed ? "Mission cleared." : "Mission reopened.");
       } else if (button.dataset.action === "edit") {
         openAssignment(task.id);
         return;
       } else if (button.dataset.action === "delete") {
         if (!window.confirm(`Delete “${task.title}”?`)) return;
+        if (cloudMode) {
+          const { error } = await db.from("assignments").delete().eq("id", task.id);
+          if (error) { showToast(error.message); return; }
+          showToast("Mission removed from the network.");
+          try { await loadCloudData(); } catch (loadError) { showToast(loadError.message); }
+          return;
+        }
         state.assignments = state.assignments.filter((item) => item.id !== task.id);
         showToast("Assignment deleted.");
       }
@@ -582,7 +823,7 @@
       renderAll();
     });
 
-    byId("assignmentForm").addEventListener("submit", (event) => {
+    byId("assignmentForm").addEventListener("submit", async (event) => {
       event.preventDefault();
       const task = {
         title: byId("assignmentName").value.trim(), course: byId("assignmentCourse").value,
@@ -590,6 +831,17 @@
         notes: byId("assignmentNotes").value.trim()
       };
       if (!task.title || !task.due) return;
+      if (cloudMode) {
+        const values = { title: task.title, course: task.course, priority: task.priority, due_date: new Date(task.due).toISOString(), description: task.notes };
+        const result = editingId
+          ? await db.from("assignments").update(values).eq("id", editingId)
+          : await db.from("assignments").insert({ ...values, created_by: playerId });
+        if (result.error) { showToast(result.error.message); return; }
+        byId("assignmentDialog").close();
+        showToast(editingId ? "Mission updated." : "Mission deployed to the network.");
+        try { await loadCloudData(); } catch (error) { showToast(error.message); }
+        return;
+      }
       if (editingId) {
         const existing = state.assignments.find((item) => item.id === editingId);
         if (!existing) return;
@@ -597,7 +849,7 @@
         showToast("Assignment updated.");
       } else {
         state.assignments.push({ ...task, id: createId(), completed: false, createdAt: new Date().toISOString() });
-        showToast("Assignment added.");
+        showToast("Saved in this browser only. Connect the shared network to sync it.");
       }
       saveData();
       byId("assignmentDialog").close();
@@ -605,23 +857,116 @@
     });
 
     byId("profileButton").addEventListener("click", () => byId("profileDialog").showModal());
-    byId("profileForm").addEventListener("submit", (event) => {
+    byId("profileForm").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = byId("profileInput").value.trim();
       if (!name) return;
       state.profile.name = name.slice(0, 40);
+      if (cloudMode) {
+        const { error } = await db.from("profiles").upsert({ id: playerId, display_name: state.profile.name });
+        if (error) { showToast(error.message); return; }
+      }
       saveData();
       renderAll();
       byId("profileDialog").close();
       showToast("Profile saved.");
     });
     byId("resetButton").addEventListener("click", () => {
-      if (!window.confirm("Delete your profile and all assignments from this browser?")) return;
+      if (!window.confirm("Clear this browser's cached missions and reset your local profile name? Shared missions will remain online.")) return;
       state = { profile: { name: "" }, assignments: [] };
+      if (cloudMode) state.assignments = [];
       saveData();
       byId("profileDialog").close();
       renderAll();
       showToast("Local data reset.");
+    });
+
+    document.querySelectorAll("[data-jump]").forEach((button) => button.addEventListener("click", () => {
+      byId(button.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelectorAll("[data-jump]").forEach((item) => item.classList.toggle("active", item === button));
+    }));
+
+    byId("settingsButton").addEventListener("click", () => {
+      try {
+        const config = JSON.parse(localStorage.getItem(NETWORK_KEY) || "null");
+        byId("projectUrl").value = config?.url || "";
+        byId("anonKey").value = config?.key || "";
+      } catch {}
+      byId("networkDialog").showModal();
+    });
+    byId("syncConnect").addEventListener("click", () => byId("settingsButton").click());
+
+    byId("networkForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const url = byId("projectUrl").value.trim().replace(/\/$/, "");
+      const key = byId("anonKey").value.trim();
+      try {
+        await connectNetwork(url, key);
+        localStorage.setItem(NETWORK_KEY, JSON.stringify({ url, key }));
+        byId("networkDialog").close();
+        showToast("RED//CORE network connected.");
+      } catch (error) {
+        db = null;
+        playerId = null;
+        setNetworkStatus(false);
+        showToast(`Network connection failed: ${error.message}`);
+      }
+    });
+
+    byId("disconnectButton").addEventListener("click", async () => {
+      if (realtimeChannel && db) await db.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+      db = null;
+      playerId = null;
+      submissions = [];
+      completions = new Set();
+      localStorage.removeItem(NETWORK_KEY);
+      state = { profile: state.profile, assignments: [] };
+      saveData();
+      setNetworkStatus(false);
+      renderAll();
+      byId("networkDialog").close();
+      showToast("Disconnected from the shared network.");
+    });
+
+    byId("uploadButton").addEventListener("click", () => {
+      if (!cloudMode) { showToast("Connect the shared network before uploading work."); return; }
+      const completed = state.assignments.filter((item) => item.completed);
+      if (!completed.length) { showToast("Complete a mission before uploading work."); return; }
+      byId("submissionAssignment").replaceChildren(...completed.map((item) => {
+        const option = makeElement("option", "", item.title);
+        option.value = item.id;
+        return option;
+      }));
+      byId("submissionDialog").showModal();
+    });
+
+    byId("submissionForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!cloudMode) return;
+      const file = byId("submissionImage").files?.[0];
+      const assignmentId = byId("submissionAssignment").value;
+      if (!file || !assignmentId) return;
+      if (!new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]).has(file.type) || file.size > 10 * 1024 * 1024) { showToast("Choose a JPG, PNG, WebP, or GIF under 10 MB."); return; }
+      const extension = file.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g, "") || "image";
+      const path = `${playerId}/${createId()}.${extension}`;
+      const { error: uploadError } = await db.storage.from("finished-work").upload(path, file, { upsert: false, contentType: file.type });
+      if (uploadError) { showToast(uploadError.message); return; }
+      const { data: publicFile } = db.storage.from("finished-work").getPublicUrl(path);
+      const assignment = state.assignments.find((item) => item.id === assignmentId);
+      const { error } = await db.from("submissions").insert({
+        assignment_id: assignmentId, user_id: playerId, student_name: state.profile.name || "Student",
+        image_url: publicFile.publicUrl, storage_path: path, notes: byId("submissionNotes").value.trim()
+      });
+      if (error) {
+        await db.storage.from("finished-work").remove([path]);
+        showToast(error.message);
+        return;
+      }
+      byId("submissionDialog").close();
+      byId("submissionForm").reset();
+      showToast("Finished work added to the shared archive.");
+      try { await loadCloudData(); } catch (loadError) { showToast(loadError.message); }
     });
 
     document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => byId(button.dataset.close).close()));
@@ -647,6 +992,7 @@
     importFile.addEventListener("change", async () => {
       const file = importFile.files?.[0];
       if (!file) return;
+      if (cloudMode) { showToast("Disconnect the shared network before importing a local backup."); importFile.value = ""; return; }
       try {
         const imported = JSON.parse(await file.text());
         if (!imported || typeof imported !== "object" || !Array.isArray(imported.assignments)) throw new Error("Invalid backup");
@@ -673,6 +1019,15 @@
 
     renderAll();
     setInterval(() => { updateStats(); renderAssignments(); }, 60000);
+    void (async () => {
+      try {
+        const config = JSON.parse(localStorage.getItem(NETWORK_KEY) || "null");
+        if (config?.url && config?.key) await connectNetwork(config.url, config.key);
+      } catch (error) {
+        setNetworkStatus(false);
+        showToast(`Could not load the shared network: ${error.message}`);
+      }
+    })();
   </script>
 </body>
 </html>
